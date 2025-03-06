@@ -15,7 +15,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-# Модели базы данных
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -211,7 +210,7 @@ def create_invoice():
     materials_transaction = Transaction(
         client_id=client.id,
         invoice_id=invoice.id,
-        amount=-total_materials_cost,  # отрицательное значение = долг
+        amount=-total_materials_cost,  #сделал попроще отрицательное значение = долг
         description="Стоимость материалов"
     )
     db.session.add(materials_transaction)
@@ -220,11 +219,11 @@ def create_invoice():
     markup_transaction = Transaction(
         client_id=client.id,
         invoice_id=invoice.id,
-        amount=-markup_amount,  # отрицательное значение = долг
+        amount=-markup_amount,  # тут тож самое
         description="Наценка"
     )
     db.session.add(markup_transaction)
-
+#TODO Доп задание
     if data.get('supplier_id'):
         supplier = Supplier.query.get_or_404(data['supplier_id'])
         commission_amount = total_materials_cost * (supplier.commission_percentage / 100)
@@ -265,7 +264,7 @@ def get_client_debt(client_id):
 
 if __name__ == '__main__':
     with app.app_context():
-        if not Client.query.first():
+        if not Client.query.first(): #Данные для отладки/тестов
             test_client = Client(name="фывasd", markup_percentage=12.3)
             test_supplier = Supplier(name="Поставщик Тест", commission_percentage=5)
             test_material = Material(name="Тестовый материал", price=1234.0)
